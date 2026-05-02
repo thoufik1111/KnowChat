@@ -63,17 +63,10 @@ def generate_analytics(messages):
 
     sorted_users = sorted(msg_count, key=msg_count.get, reverse=True)
 
-    # ── Text Analysis Sampling ────────────────────────────────────────
-    # Blended Sampling: Pick 5,000 messages evenly across the whole history
-    text_sample = messages
-    if len(messages) > 5000:
-        step = len(messages) // 5000
-        text_sample = messages[::step]
-
     # ── Emoji analysis ────────────────────────────────────────────────
     user_emojis = {}
     all_emoji_counter = Counter()
-    for m in text_sample:
+    for m in messages:
         emojis = extract_emojis(m['message'])
         user_emojis[m['user']] = user_emojis.get(m['user'], 0) + len(emojis)
         all_emoji_counter.update(emojis)
@@ -85,7 +78,7 @@ def generate_analytics(messages):
     user_top_words = {}
     user_word_counters = defaultdict(Counter)
     
-    for m in text_sample:
+    for m in messages:
         if not m['is_media']:
             for w in m['message'].split():
                 cleaned = clean_word(w)
@@ -129,13 +122,7 @@ def generate_analytics(messages):
 
     # ── Sentiment Analysis ───────────────────────────────────────────
     sentiments = []
-    # Blended Vibe Check: Sample 100 messages evenly from start to finish
-    sentiment_sample = messages
-    if len(messages) > 100:
-        step = len(messages) // 100
-        sentiment_sample = messages[::step]
-
-    for m in sentiment_sample:
+    for m in messages:
         if not m['is_media'] and m['message']:
             score = analyzer.polarity_scores(m['message'])['compound']
             sentiments.append(score)
@@ -182,14 +169,10 @@ def generate_analytics(messages):
         user_streaks[u] = max_streak if active_dates else 0
 
     # ── MVP scores ────────────────────────────────────────────────────
-    all_sorted = sorted(
-        [mm for msgs in user_messages.values() for mm in msgs],
-        key=lambda x: (x['date'], x['time'])
-    )
     opener_counts = defaultdict(int)
-    for i, m in enumerate(all_sorted):
-        if i == 0 or all_sorted[i]['date'] != all_sorted[i-1]['date'] or \
-                (all_sorted[i]['hour'] - all_sorted[i-1]['hour']) >= 3:
+    for i, m in enumerate(messages):
+        if i == 0 or messages[i]['date'] != messages[i-1]['date'] or \
+                (messages[i]['hour'] - messages[i-1]['hour']) >= 3:
             opener_counts[m['user']] += 1
     max_msgs  = max(msg_count.values(), default=1)
     max_words = max(word_count.values(), default=1)
