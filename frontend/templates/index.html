@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KnowChat — WhatsApp Analytics</title>
+<link rel="icon" type="image/png" href="/static/logo.png">
+<link rel="apple-touch-icon" href="/static/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<!-- ─── SIDEBAR ─────────────────────────────────────────────── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <img src="/static/logo.png" alt="KnowChat Logo" class="logo-img">
+    <span class="logo-text">KnowChat</span>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="#" class="nav-item active" data-section="upload">
+      <span class="nav-icon">📤</span><span>Upload</span>
+    </a>
+    <a href="#" class="nav-item" data-section="dashboard">
+      <span class="nav-icon">📊</span><span>Dashboard</span>
+    </a>
+    <a href="#" class="nav-item" data-section="insights">
+      <span class="nav-icon">🧠</span><span>Insights</span>
+    </a>
+    <a href="#" class="nav-item" data-section="users">
+      <span class="nav-icon">👥</span><span>Users</span>
+    </a>
+    <a href="#" class="nav-item" data-section="timeline">
+      <span class="nav-icon">📅</span><span>Timeline</span>
+    </a>
+    <a href="#" class="nav-item" data-section="pdf" id="pdfNavBtn">
+      <span class="nav-icon">📄</span><span>Download PDF</span>
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <button class="theme-toggle" id="themeToggle" title="Toggle theme">
+      <span id="themeIcon">☀️</span>
+    </button>
+  </div>
+</aside>
+
+<!-- ─── HAMBURGER ────────────────────────────────────────────── -->
+<button class="hamburger" id="hamburger">☰</button>
+
+<!-- ─── MAIN CONTENT ─────────────────────────────────────────── -->
+<main class="main-content">
+
+  <!-- UPLOAD SECTION -->
+  <section class="section active" id="section-upload">
+    <div class="page-header">
+      <h1>WhatsApp <em>Chat Analytics</em></h1>
+      <p class="subtitle">Upload your exported chat and discover deep insights about your conversations</p>
+    </div>
+
+    <div class="upload-zone" id="uploadZone">
+      <div class="upload-inner" id="uploadInner">
+        <div class="upload-icon">📱</div>
+        <h2>Drop your chat here</h2>
+        <p>or click to browse · <strong>.txt</strong> files only</p>
+        <input type="file" id="fileInput" accept=".txt" hidden>
+        <button class="btn-primary" onclick="document.getElementById('fileInput').click()">
+          Choose File
+        </button>
+      </div>
+    </div>
+
+    <div class="upload-actions">
+      <span class="divider-text">— or —</span>
+      <button class="btn-outline" id="sampleBtn">
+        🎲 Try with Sample Chat
+      </button>
+    </div>
+
+    <div class="how-to-export">
+      <h3>How to export your WhatsApp chat</h3>
+      <ol>
+        <li>Open a WhatsApp chat or group</li>
+        <li>Tap ⋮ Menu → <strong>More → Export chat</strong></li>
+        <li>Choose <strong>Without Media</strong></li>
+        <li>Save the <strong>.txt</strong> file and upload it here</li>
+      </ol>
+      <p class="privacy-note">🔒 Your data is processed locally and never stored.</p>
+    </div>
+  </section>
+
+  <!-- DASHBOARD SECTION -->
+  <section class="section" id="section-dashboard">
+    <div class="page-header">
+      <h1>Dashboard</h1>
+      <p class="subtitle" id="dashboardSubtitle">Overview of your conversation</p>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-grid" id="statsGrid"></div>
+
+    <!-- Charts Row -->
+    <div class="charts-grid">
+      <div class="chart-card wide">
+        <h3>Messages Over Time</h3>
+        <div class="chart-wrap"><canvas id="timelineChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Messages per User</h3>
+        <div class="chart-wrap"><canvas id="barChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Contribution Share</h3>
+        <div class="chart-wrap pie-wrap"><canvas id="pieChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Activity by Hour</h3>
+        <div class="chart-wrap"><canvas id="hourChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Activity by Day</h3>
+        <div class="chart-wrap"><canvas id="dayChart"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSIGHTS SECTION -->
+  <section class="section" id="section-insights">
+    <div class="page-header">
+      <h1>Smart <em>Insights</em></h1>
+      <p class="subtitle">Personality badges and conversation intelligence</p>
+    </div>
+    <div class="badges-grid" id="badgesGrid"></div>
+
+    <!-- MVP Leaderboard -->
+    <div class="mvp-section" id="mvpSection" style="margin-top:2rem;"></div>
+
+    <div class="charts-grid" style="margin-top:2rem;">
+      <div class="chart-card">
+        <h3>Top Emojis Used</h3>
+        <div id="emojiChart"></div>
+      </div>
+      <div class="chart-card">
+        <h3>Most Used Words</h3>
+        <div id="wordCloud"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- USERS SECTION -->
+  <section class="section" id="section-users">
+    <div class="page-header">
+      <h1>User <em>Profiles</em></h1>
+      <p class="subtitle">Deep dive into each member's activity and patterns</p>
+    </div>
+    <div id="userProfiles"></div>
+  </section>
+
+  <!-- TIMELINE SECTION -->
+  <section class="section" id="section-timeline">
+    <div class="page-header">
+      <h1>Timeline <em>Analysis</em></h1>
+      <p class="subtitle">Message trends and peak communication windows</p>
+    </div>
+    <div class="charts-grid">
+      <div class="chart-card wide">
+        <h3>Daily Message Volume</h3>
+        <div class="chart-wrap"><canvas id="timelineChart2"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Hourly Distribution</h3>
+        <div class="chart-wrap"><canvas id="hourChart2"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Day of Week Pattern</h3>
+        <div class="chart-wrap"><canvas id="dayChart2"></canvas></div>
+      </div>
+    </div>
+    <!-- Heatmap moved here -->
+    <div class="chart-card wide" style="margin-top:1.5rem;">
+      <h3>Activity Heatmap (Day × Hour)</h3>
+      <div id="heatmapContainer"></div>
+    </div>
+    <div id="bestTimeSuggestions" class="best-time-grid"></div>
+  </section>
+
+</main>
+
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loader-box">
+    <div class="spinner"></div>
+    <p id="loadingText">Analyzing your chat...</p>
+    <div class="loading-steps" id="loadingSteps">
+      <span class="step done">Parsing messages</span>
+      <span class="step active">Computing analytics</span>
+      <span class="step">Building charts</span>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="/static/js/app.js"></script>
+</body>
+</html>

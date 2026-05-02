@@ -1,0 +1,5 @@
+flask==3.0.0
+flask-cors==4.0.0
+emoji==2.10.1
+gunicorn==21.2.0
+vaderSentiment==3.3.2
