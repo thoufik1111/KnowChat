@@ -76,14 +76,12 @@ body {
 .sidebar-logo {
   display: flex;
   align-items: center;
-  gap: 15px; /* Approximately 4mm on standard DPI displays */
-  padding: 30px 10px 20px;
+  gap: -5px;
+  padding: 20px 15px;
 }
 .logo-img {
-  height: 85px; /* Further increased for visibility as requested */
+  height: 48px;
   width: auto;
-  display: block;
-  object-fit: contain;
 }
 .logo-text {
   font-family: var(--font-display);
